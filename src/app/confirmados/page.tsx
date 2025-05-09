@@ -1,11 +1,22 @@
 import type React from "react"
-import { saveConfirmation } from "@/app/actions"
-import { ConfirmationForm } from "@/components/confirmation-form"
+import { redirect } from "next/navigation"
+import { cookies } from "next/headers"
+import { getConfirmations } from "@/app/actions"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Notification } from "@/components/notification"
+import { ConfirmationList } from "@/components/confirmation-list"
 
-export default function Home() {
+export default async function ConfirmadosPage() {
+  const cookieStore = cookies()
+  const isAuthenticated = cookieStore.get("auth")?.value === "true"
+
+  if (!isAuthenticated) {
+    redirect("/admin")
+  }
+
+  const confirmations = await getConfirmations()
+
   return (
     <div className="container mx-auto max-w-2xl">
       <div className="card">
@@ -13,16 +24,16 @@ export default function Home() {
 
         <div className="content fade-in" style={{ "--delay": 2 } as React.CSSProperties}>
           <h2 className="text-center text-3xl font-semibold mb-6 text-primary relative inline-block w-full font-cormorant">
-            Confirmação de Presença
+            Lista de Confirmações
           </h2>
           <p className="text-center mb-8 text-text-light text-lg font-cormorant">
-            É com grande alegria que convidamos você para celebrar este momento especial conosco.
+            Pessoas que confirmaram presença em nosso momento especial:
           </p>
 
-          <ConfirmationForm saveConfirmation={saveConfirmation} />
+          <ConfirmationList confirmations={confirmations} />
         </div>
 
-        <Footer />
+        <Footer isAdmin={true} />
       </div>
 
       <Notification />
