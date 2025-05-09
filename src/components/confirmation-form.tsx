@@ -22,6 +22,7 @@ export function ConfirmationForm({ saveConfirmation }: ConfirmationFormProps) {
       const result = await saveConfirmation(formData)
 
       if (result.success) {
+        alert("Confirmação enviada com sucesso!")
         toast({
           title: result.message,
           variant: "success",
