@@ -1,21 +1,18 @@
 import type React from "react"
 import { redirect } from "next/navigation"
 import { cookies } from "next/headers"
-import { getConfirmations } from "@/app/actions"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Notification } from "@/components/notification"
 import { ConfirmationList } from "@/components/confirmation-list"
 
 export default async function ConfirmadosPage() {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   const isAuthenticated = cookieStore.get("auth")?.value === "true"
 
   if (!isAuthenticated) {
     redirect("/admin")
   }
-
-  const confirmations = await getConfirmations()
 
   return (
     <div className="container mx-auto max-w-2xl">
@@ -30,7 +27,7 @@ export default async function ConfirmadosPage() {
             Pessoas que confirmaram presença em nosso momento especial:
           </p>
 
-          <ConfirmationList confirmations={confirmations} />
+          <ConfirmationList />
         </div>
 
         <Footer isAdmin={true} />

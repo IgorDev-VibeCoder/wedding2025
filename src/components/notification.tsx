@@ -15,7 +15,7 @@ export function Notification() {
 
   // Listen for custom events
   useEffect(() => {
-    const handleCustomEvent = (e: CustomEvent) => {
+    const handleCustomEvent = (e: CustomEvent<{ message: string; type: "success" | "error" }>) => {
       setNotification({
         show: true,
         message: e.detail.message,
@@ -29,11 +29,11 @@ export function Notification() {
     }
 
     // Add event listener
-    window.addEventListener("notification" as any, handleCustomEvent as EventListener)
+    window.addEventListener("notification", handleCustomEvent as EventListener)
 
     // Cleanup
     return () => {
-      window.removeEventListener("notification" as any, handleCustomEvent as EventListener)
+      window.removeEventListener("notification", handleCustomEvent as EventListener)
     }
   }, [])
 

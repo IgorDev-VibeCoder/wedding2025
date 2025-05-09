@@ -1,84 +1,61 @@
 "use server"
 
-import fs from "fs/promises"
-import path from "path"
+import { supabase } from "@/lib/supabase"
 import { cookies } from "next/headers"
 
-const DATA_FILE = path.join(process.cwd(), "data", "confirmados.json")
+
+
 const ADMIN_PASSWORD = "casamento2025"
 
-// Ensure data directory exists
-async function ensureDataDir() {
-  const dir = path.join(process.cwd(), "data")
-  try {
-    await fs.access(dir)
-  } catch {
-    await fs.mkdir(dir, { recursive: true })
-  }
-}
-
-// Helper to read the JSON file
-async function readData() {
-  await ensureDataDir()
-
-  try {
-    const raw = await fs.readFile(DATA_FILE, "utf-8")
-    return JSON.parse(raw)
-  } catch (err) {
-    // If file doesn't exist, create it with empty array
-    await fs.writeFile(DATA_FILE, "[]")
-    return []
-  }
-}
-
-// Helper to write to the JSON file
-async function writeData(data: any) {
-  await ensureDataDir()
-  await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2))
-}
-
-// Save a new confirmation
 export async function saveConfirmation(formData: FormData) {
-  const name = formData.get("name") as string
-  const confirmation = formData.get("confirmation") as string
-  const guests = Number.parseInt(formData.get("guests") as string, 10) || 0
+  const nome = formData.get("name")?.toString().trim() || ""
+  const confirmacao = formData.get("confirmation")?.toString() || ""
+  const acompanhantes = parseInt(formData.get("guests")?.toString() || "0", 10)
 
-  if (!name || !confirmation) {
-    return { success: false, message: "Dados incompletos" }
+  if (!nome || !confirmacao) {
+    return { success: false, message: "Preencha todos os campos obrigatórios." }
   }
 
-  const data = await readData()
-  const confirmed = confirmation === "sim"
+  const confirmada = confirmacao === "sim"
 
-  data.push({
-    id: Date.now(),
-    name,
-    confirmed,
-    guests,
-  })
+  const { error } = await supabase.from("convidados").insert([
+    {
+      nome, // coluna text
+      confirmacao: confirmada, // coluna bool
+      acompanhantes, // coluna numeric
+    },
+  ])
 
-  await writeData(data)
+  if (error) {
+    console.error("Erro ao salvar no Supabase:", error)
+    return { success: false, message: "Erro ao salvar confirmação." }
+  }
 
   return {
     success: true,
-    message: confirmed
-      ? `Obrigado ${name.split(" ")[0]}! Sua presença foi confirmada.`
-      : `Obrigado ${name.split(" ")[0]} pelo retorno. Sentiremos sua falta!`,
+    message: confirmada
+      ? `Obrigado ${nome.split(" ")[0]}! Sua presença foi confirmada.`
+      : `Obrigado ${nome.split(" ")[0]} pelo retorno. Sentiremos sua falta!`,
   }
 }
 
-// Get all confirmations
 export async function getConfirmations() {
-  return await readData()
+  const { data, error } = await supabase.from("convidados").select("*")
+
+  if (error) {
+    throw new Error("Erro ao buscar confirmações")
+  }
+
+  return data
 }
 
-// Authenticate admin
 export async function authenticate(password: string) {
   if (password === ADMIN_PASSWORD) {
-    cookies().set("auth", "true", {
+    const cookieStore = await cookies()
+    cookieStore.set("auth", "true", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24, // 1 day
+      maxAge: 60 * 60 * 24, // 1 dia
       path: "/",
     })
     return { success: true }
@@ -89,6 +66,7 @@ export async function authenticate(password: string) {
 
 // Logout
 export async function logout() {
-  cookies().delete("auth")
+  const cookieStore = await cookies()
+  cookieStore.delete("auth")
   return { success: true }
 }

@@ -26,15 +26,14 @@ export function ConfirmationForm({ saveConfirmation }: ConfirmationFormProps) {
           title: result.message,
           variant: "success",
         })
-        // Reset form
-        e.currentTarget.reset()
+
       } else {
         toast({
           title: result.message || "Erro ao enviar confirmação",
           variant: "destructive",
         })
       }
-    } catch (error) {
+    } catch {
       toast({
         title: "Erro ao enviar confirmação",
         variant: "destructive",
@@ -45,9 +44,9 @@ export function ConfirmationForm({ saveConfirmation }: ConfirmationFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="form-group fade-in" style={{ "--delay": 3 } as React.CSSProperties}>
-        <label htmlFor="name" className="block mb-2 text-accent text-base font-medium tracking-wide">
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div>
+        <label htmlFor="name" className="block text-base font-semibold text-[#B08D95] mb-2">
           Nome Completo:
         </label>
         <input
@@ -56,58 +55,58 @@ export function ConfirmationForm({ saveConfirmation }: ConfirmationFormProps) {
           name="name"
           required
           placeholder="Digite seu nome completo"
-          className="w-full py-3.5 px-4 border border-border rounded-lg text-base transition-colors focus:outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(176,141,149,0.2)]"
+          className="w-full px-4 py-3.5 rounded-lg border border-[#E7D9DB] focus:outline-none focus:ring-2 focus:ring-[#B08D95]/30 focus:border-[#B08D95] placeholder:text-[#c4b2b5] transition"
         />
       </div>
 
-      <div className="form-group fade-in" style={{ "--delay": 4 } as React.CSSProperties}>
-        <label className="block mb-2 text-accent text-base font-medium tracking-wide">Confirma presença?</label>
-        <div className="flex flex-col md:flex-row gap-4 md:gap-5 mt-2.5">
-          <div className="relative block w-full">
+      <div>
+        <label className="block text-base font-semibold text-[#B08D95] mb-2">Confirma presença?</label>
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="relative w-full">
             <input
               type="radio"
               id="confirm-yes"
               name="confirmation"
               value="sim"
               required
-              className="absolute opacity-0 w-0 h-0"
+              className="sr-only peer"
             />
             <label
               htmlFor="confirm-yes"
-              className="relative cursor-pointer py-4 px-5 rounded-lg bg-white text-text-color font-medium w-full flex items-center justify-center transition-all border-2 border-border hover:border-primary hover:-translate-y-0.5 hover:shadow-[0_5px_15px_rgba(176,141,149,0.2)]"
+              className="block w-full cursor-pointer rounded-lg border-2 border-[#E7D9DB] bg-white py-4 px-5 text-center text-[#5c4a4e] font-medium peer-checked:border-[#B08D95] peer-checked:shadow-md hover:-translate-y-0.5 transition-all"
             >
-              <i className="fas fa-check-circle mr-2 text-text-light"></i>
+              <i className="fas fa-check-circle mr-2 text-[#B08D95]"></i>
               Sim, confirmo presença
             </label>
           </div>
 
-          <div className="relative block w-full">
+          <div className="relative w-full">
             <input
               type="radio"
               id="confirm-no"
               name="confirmation"
               value="não"
-              className="absolute opacity-0 w-0 h-0"
+              className="sr-only peer"
             />
             <label
               htmlFor="confirm-no"
-              className="relative cursor-pointer py-4 px-5 rounded-lg bg-white text-text-color font-medium w-full flex items-center justify-center transition-all border-2 border-border hover:border-primary hover:-translate-y-0.5 hover:shadow-[0_5px_15px_rgba(176,141,149,0.2)]"
+              className="block w-full cursor-pointer rounded-lg border-2 border-[#E7D9DB] bg-white py-4 px-5 text-center text-[#5c4a4e] font-medium peer-checked:border-[#B08D95] peer-checked:shadow-md hover:-translate-y-0.5 transition-all"
             >
-              <i className="fas fa-times-circle mr-2 text-text-light"></i>
+              <i className="fas fa-times-circle mr-2 text-[#B08D95]"></i>
               Infelizmente não poderei ir
             </label>
           </div>
         </div>
       </div>
 
-      <div className="form-group fade-in" style={{ "--delay": 5 } as React.CSSProperties}>
-        <label htmlFor="guests" className="block mb-2 text-accent text-base font-medium tracking-wide">
+      <div>
+        <label htmlFor="guests" className="block text-base font-semibold text-[#B08D95] mb-2">
           Número de acompanhantes:
         </label>
         <select
           id="guests"
           name="guests"
-          className="w-full py-3.5 px-4 border border-border rounded-lg text-base transition-colors focus:outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(176,141,149,0.2)] appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23B08D95%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_15px_center] bg-[length:20px] cursor-pointer"
+          className="w-full p-4 rounded-lg border border-[#E7D9DB] text-base text-[#5c4a4e] appearance-none focus:outline-none focus:ring-2 focus:ring-[#B08D95]/30 focus:border-[#B08D95]"
         >
           <option value="0">0</option>
           <option value="1">1</option>
@@ -131,5 +130,6 @@ export function ConfirmationForm({ saveConfirmation }: ConfirmationFormProps) {
         </button>
       </div>
     </form>
+
   )
 }

@@ -42,7 +42,7 @@ export default function AdminPage() {
         })
         setPassword("")
       }
-    } catch (err) {
+    } catch {
       setError("Erro ao fazer login. Tente novamente.")
       toast({
         title: "Erro ao fazer login. Tente novamente.",
